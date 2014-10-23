@@ -1,0 +1,45 @@
+require 'csv'
+
+def grabDinos(dinoarray, qText, hname)
+  puts hname
+	dinoarray.each do |ff|
+		ff.each do |name, value|
+	  	if (name == hname) and (value == qText)
+				puts ff['name']
+				puts "\n"
+			end
+		end
+	end
+end 	
+
+allDinos = Array.new
+array_csv_files = ['dinodex.csv','african_dinosaur_export.csv']
+#puts array_csv_files
+array_csv_files.each do |file|
+	csv = CSV.read(file, :headers => true, :header_converters => [:downcase])
+	csv.by_row!
+	
+	csv.each do |row|
+	 dino_temp = row.to_hash
+	 if dino_temp['genus'] != nil 
+	 	dino_temp['name'] = dino_temp.delete('genus')
+		dino_temp['diet'] = (dino_temp.delete('carnivore') == 'Yes')?'Carnivore':'Not Carnivore'
+	 end
+	 allDinos << dino_temp
+	end
+end
+ 
+print("Enter a single choice or comma separated choices, please select from given (Bipeds, carnivores, periods, big, small) : ")
+userq = gets.chomp
+
+userinput = userq.split(",")
+userinput.each do |val|
+	case val.upcase
+		when "BIPEDS"
+			puts val
+			grabDinos(allDinos, val, "walking")
+		else
+			puts "No selection made"
+	end
+end
+
